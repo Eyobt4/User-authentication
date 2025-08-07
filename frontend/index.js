@@ -1,32 +1,38 @@
-const signupForm = document.getElementById("signupForm");
+const signupForm = document.getElementById("registerForm");
 const loginForm = document.getElementById("loginForm");
-
+//signup
 signupForm.addEventListener( "submit" ,async (e)=>{
     e.preventDefault();
 
-    const formData = new FormData(signupForm);
-    const body = Object.fromEntries(formData.entries());
+    const form = new.target;
+    const data = {
+        username: form.username.value,
+        email: form.email.value,
+        password: form.password.value,
+    };
 
-    const res = await fetch("http://localhost:5001/api/signup",{
+    const res = await fetch("http://localhost:5001/auth/register",{
         method:"POST",
         headers:{"Content-Type": "application/json "},
-        body:JSON.stringify(body),
+        body:JSON.stringify(data),
     });
-    const data = await res.json();
-    alert(JSON.stringify(data));
+    const result = await res.json();
+    alert(result.message||"registered!");
 });
-
+//login
 loginForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
 
-    const formData =   new FormData(loginForm);
-    const body = Object.fromEntries(formData.entries());
-
-    const res = fetch("http://localhost:5001/api/login", {
+    const form = new.target;
+     const data = {
+        email: form.email.value,
+        password: form.password.value,
+    }
+    const res = fetch("http://localhost:5001/auth/login", {
         method:"POST",
         headers:{"Content-Type":"applicatio/json"},
-        body:JSON.stringify(body),
+        body:JSON.stringify(data),
     });
-    const data = await res.json()
-    alert(JSON.stringify(data));
+    const result = await res.json();
+    alert(result.message||"registered!");
 });
