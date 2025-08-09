@@ -1,11 +1,12 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 //signup user
 const signup =  async (req,res)=>{
     //recive the req
     const {username,email,password} = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     
     //check if the fields are empty
     if(!username||!email||!password){
@@ -34,6 +35,8 @@ const signup =  async (req,res)=>{
 //login user
 const login  = async(req,res)=>{
     const {email,password} = req.body;
+    console.log(req.body);
+    
 
     if(!email||!password){
         res.status(400).send("error");

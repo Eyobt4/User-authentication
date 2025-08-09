@@ -8,23 +8,8 @@ const connectDB = require("./config/connectDB");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const { authRouter } =require("./auth");
+// const { authRouter } =require("./auth");
 const userRouter = require("./routes/userRouter")
-
-
-//session
-// app.use(cors);
-// app.use(express.json());
-// app.use(
-//     session({
-//         secret: "supersecretkey",
-//         resave: false,
-//         saveUninitialized: true,
-//         cookie: {secure:false},
-//     })
-// );
-// app.use("/auth",auth);
-// app.use(express.static("public"));
 
 const port = process.env.PORT;
 
@@ -33,8 +18,9 @@ app.get("/",(req,res)=>{
     res.send("API is working");
 });
 app.use("/api/auth",userRouter);
-app.use("/api/auth", authRouter);
+// app.use("/api/auth", authRouter);
 
+//protected route /dashboard
 app.get("/dashbard",(req,res)=>{
             if(req.session.user){
                 res.send("welcome back"+ req.session.user.id);
