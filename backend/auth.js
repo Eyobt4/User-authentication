@@ -1,43 +1,56 @@
-import express from "express";
-import {ExpressAuth} from "@auth/express";
-import Credentials from "@auth/express/providers/credentials";
-import bcrypt from "bcryptjs";
-import User from "./models/User.js"; // Your MongoDB User model
+// import { betterAuth } from "better-auth";
+// import { MongoDBAdapter } from "@better-auth/mongodb";
+// import mongoose from "mongoose";
 
-export const authRouter = express.Router();
+// await mongoose.connect(process.env.MONGO_URI);
 
-authRouter.use(
-  ExpressAuth({
-    providers: [
-      Credentials({
-        name: "Credentials",
-        credentials: {
-          email: { label: "Email", type: "text" },
-          password: { label: "Password", type: "password" },
-        },
-        async authorize(credentials) {
-          const { email, password } = credentials;
+// export const auth = betterAuth({
+//   adapter: MongoDBAdapter({
+//     uri: process.env.MONGO_URI,
+//     databaseName: "myAuthDB", // optional, default is from URI
+//   }),
+//   secret: process.env.AUTH_SECRET,
+// });
+const { betterAuth } = require("better-auth");
+const { MongoClient } = require("mongodb");
+const { mongodbAdapter } = require("better-auth/adapters/mongodb");
+ 
+const client = new MongoClient("mongodb+srv://eyobtesfaye838:eyob838@auth-cluster.cffb4ie.mongodb.net/");
+const db = client.db();
+ 
+const auth = betterAuth({
+  database: mongodbAdapter(db),
+});
 
-          // Find user in MongoDB
-          const user = await User.findOne({ email });
-          if (!user) throw new Error("User not found");
+module.exports = auth;
+// const { betterAuth } = require("better-auth");
+// const bcrypt = require("bcrypt");
+// const User = require("./models/User");
+// const Session = require("./models/Session");
 
-          // Compare password
-          const isMatch = await bcrypt.compare(password, user.password);
-          if (!isMatch) throw new Error("Invalid password");
+// const auth = betterAuth({
+//   emailAndPassword: { enabled: true },
 
-          // Return user object (without password)
-          return {
-            id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-          };
-        },
-      }),
-    ],
-    session: { strategy: "jwt" }, // Or "database" if you store sessions
-    secret: process.env.AUTH_SECRET, // Add this in .env
-    csrf: false,
-  })
-);
-export default authRouter;
+//   createUser: async ({ email, password }) => {
+//     const passwordHash = await bcrypt.hash(password, 10);
+//     return await User.create({ email, passwordHash });
+//   },
+
+//   findUserByEmail: async (email) => {
+//     return await User.findOne({ email });
+//   },
+
+//   createSession: async ({ userId, token, expiresAt }) => {
+//     return await Session.create({ userId, token, expiresAt });
+//   },
+
+//   findSession: async (token) => {
+//     return await Session.findOne({ token });
+//   },
+
+//   deleteSession: async (token) => {
+//     return await Session.deleteOne({ token });
+//   },
+// });
+
+// module.exports = auth;

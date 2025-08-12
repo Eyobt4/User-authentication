@@ -48,7 +48,10 @@ const login  = async(req,res)=>{
     }
     const user = await bcrypt.compare(password,isAvailable.password);
     if(user){
-        res.status(201).send("user succesfuly logged in");
+        const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:2});
+        // const token = jwt.sign({id:user._id},JWT_SECRET,{expiresIn:JWT_EXPIRES});
+        res.cookie("token",token,{httpOnly:true, secure:false});
+        res.status(201).send("user succesfuly logged in",token);
         console.log("user succesfuly logged in");
     }
     else{
@@ -56,5 +59,18 @@ const login  = async(req,res)=>{
         console.log("invalid credential");
     }
 };
-
-module.exports = {signup,login};
+// protected route
+const secret = async (req,res)=>{
+    const token = jwt.sign({id:User._id},process.env.JWT_SECRET,{expiresIn:2});
+    if(token){
+        // const token = jwt.sign({id:user._id},JWT_SECRET,{expiresIn:JWT_EXPIRES});
+        res.cookie("token",token,{httpOnly:true, secure:false});
+        res.status(201).send("user succesfuly logged in",token);
+        console.log("user succesfuly logged in");
+    }
+    else{
+        res.status(401).send("invalid token");
+        console.log("invalid token");
+    }
+};
+module.exports = {signup,login,secret};
