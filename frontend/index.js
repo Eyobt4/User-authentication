@@ -5,22 +5,25 @@ signupForm.addEventListener( 'submit' ,async (event)=>{
     event.preventDefault();
 
     const form = new FormData(signupForm);
-    const data = {
-        username: form.get("username"),
-        email: form.get("email"),
-        password: form.get("password"),
-    };
-    console.log(data);
+    const data = Object.fromEntries(form.entries());
+    // const response = {
+    //     username: form.get("username"),
+    //     email: form.get("email"),
+    //     password: form.get("password"),
+    // };
+    // console.log(response);
     
+    try{
 
-    const res = await fetch("https://localhost:5001/auth/register",{
-        method:"POST",
-        headers:{"Content-Type": "application/json "},
-        body:JSON.stringify(data),
-    });
-    const result = await res.json();
-    alert(result.message||"registered!");
-    console.log(data);
+        const response = await fetch("http://127.0.0.1:5001/signup",{
+            method:"POST",
+            headers:{"Content-Type": "application/json "},
+            body:JSON.stringify(data),
+        });
+    }
+    catch(error){
+        console.log("Error:",error);
+    };
     
 });
 //login

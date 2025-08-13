@@ -7,7 +7,7 @@ const cookieParser =require( "cookie-parser");
 const userRouter = require("./routes/userRouter");
 const auth = require("./auth");
 const port = process.env.PORT;
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -19,9 +19,11 @@ app.get("/",(req,res)=>{
 // app.use("/api/auth",userRouter);
 
 //protected route /dashboard
-app.get("/signup",(req,res)=>{
+app.post("/signup",(req,res)=>{
     res.status(200);
-    res.json({message:"signup sucessful"})       
+    res.json({message:"signup sucessful"})  
+    console.log("signup sucessful",res.json);
+         
     
 });
 
