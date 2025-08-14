@@ -6,7 +6,7 @@ const app = express();
 const cookieParser =require( "cookie-parser");
 const userRouter = require("./routes/userRouter");
 const auth = require("./auth");
-const port = process.env.PORT;
+const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,8 +45,10 @@ const newSchema = mongoose.Schema({
 },
 {
 timestamp:true
-}
+},
 );
+
+const newModel = mongoose.model("Model",newSchema);
 
 
 app.get("/",(req,res)=>{
@@ -59,52 +61,62 @@ app.post("/signup",async (req,res)=>{
     if(!username||!password){
         res.status(404).send("all fields required");
     };
-    const available = await newSchema.findOne({email});
+    const available = await newModel.findOne({email});
     if(available){
         res.status(404).send("user already exist");
     };
-
-    const hashPassword = bcrypt.hash(password,10);
-    const newUser = newSchema.create({
+    console.log(req.body);
+    
+    const hashPassword = await bcrypt.hash(password,10);
+    const newUser = await newModel.create({
         username,
         email,
-        hashPassword
-    })
+        password:hashPassword,
+    });
     newUser.save();
+    res.status(200).send("account successfuly created");
     console.log(newUser);
+    console.log(hashPassword);
     
-    try{
-        const newUser = new User({username,email,password})
-        await newUser.save();
-        console.log("newUser is:",newUser);
+    // try{
+    //     const newUser = new User({username,email,password})
+    //     await newUser.save();
+    //     console.log("newUser is:",newUser);
         
-    }
-    catch(error){
-
-    }
+    // }
+    // catch(error){
+    // }
     
 });
 
 app.post("/login",async (req,res)=>{
     const{email,password}= req.body;
 
-    if(!username||!password){
+    if(!email||!password){
         res.status(404).send("all fields required");
     };
-    const available = await newSchema.findOne({email});
-    if(available){
-        const userLogin = await bcrypt.compare(available.password = password);
+    const available = await newModel.findOne({email});
+    if(!available){
+        
+        res.status(404).send("all fields required");
+        
+        // console.log("workkkking");
+    };
+    const userLogin = await bcrypt.compare(password,available.password);
+    if(userLogin){
 
+        const accessToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:2});
+        const refreshToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:7});
+        res.status(200).send("Login successful");
+        console.log(accessToken);
+        console.log(refreshToken);
+        
     }
-    const accessToken = jwt.sign({},{JWT_SECRET},{expiresIn:2m});
-    const refreshToken = jwt.sign({},{JWT_SECRET},{expiresIn:7d});
+    else{
+        res.status(404).send("Invalid Credential");
+    }
 
 });
-
-
-
-
-
 
 
 
