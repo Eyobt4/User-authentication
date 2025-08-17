@@ -14,6 +14,7 @@ app.use(cookieParser());
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const protect = require("./middleware/authMiddleware");
 
 const connectionDb = () => {
     try{
@@ -105,7 +106,7 @@ app.post("/login",async (req,res)=>{
     const userLogin = await bcrypt.compare(password,available.password);
     if(userLogin){
 
-        const accessToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:2});
+        const accessToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:5});
         const refreshToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:7});
         res.status(200).send("Login successful");
         console.log(accessToken);
@@ -116,6 +117,11 @@ app.post("/login",async (req,res)=>{
         res.status(404).send("Invalid Credential");
     }
 
+});
+
+app.get("/protected",protect,(req,res)=>{
+    res.status(200).send("you are in protected page")
+    console.log("you are in protected page");
 });
 
 
