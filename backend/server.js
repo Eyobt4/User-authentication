@@ -3,14 +3,14 @@ const cors = require("cors");
 require("dotenv").config();
 // const connectDB = require("./config/connectDB");
 const app = express();
-const cookieParser =require( "cookie-parser");
+// const cookieParser =require( "cookie-parser");
 const userRouter = require("./routes/userRouter");
 const auth = require("./auth");
 const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+// app.use(cookieParser());
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -56,15 +56,17 @@ app.get("/",(req,res)=>{
     res.send("API is working");
 });
 
-//protected route /dashboard
+// signup route
 app.post("/signup",async (req,res)=>{
     const {username,email,password} = req.body;
+    console.log(req.body);
+
     if(!username||!password){
-        res.status(404).send("all fields required");
+        return res.status(404).send("all fields required");
     };
     const available = await newModel.findOne({email});
     if(available){
-        res.status(404).send("user already exist");
+        return res.status(404).send("user already exist");
     };
     console.log(req.body);
     
@@ -75,21 +77,12 @@ app.post("/signup",async (req,res)=>{
         password:hashPassword,
     });
     newUser.save();
-    res.status(200).send("account successfuly created");
     console.log(newUser);
-    console.log(hashPassword);
-    
-    // try{
-    //     const newUser = new User({username,email,password})
-    //     await newUser.save();
-    //     console.log("newUser is:",newUser);
-        
-    // }
-    // catch(error){
-    // }
+    return res.status(200).send("account successfuly created");
     
 });
 
+// login route
 app.post("/login",async (req,res)=>{
     const{email,password}= req.body;
 
@@ -106,8 +99,8 @@ app.post("/login",async (req,res)=>{
     const userLogin = await bcrypt.compare(password,available.password);
     if(userLogin){
 
-        const accessToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:5});
-        const refreshToken = jwt.sign({id:userLogin},"yourStrongSecretHere",{expiresIn:7});
+        const accessToken = jwt.sign({id:userLogin},process.env.JWT_SECRET,{expiresIn:'5m'});
+        const refreshToken = jwt.sign({id:userLogin},process.env.JWT_SECRET,{expiresIn:'7d'});
         res.status(200).send("Login successful");
         console.log(accessToken);
         console.log(refreshToken);
@@ -119,12 +112,23 @@ app.post("/login",async (req,res)=>{
 
 });
 
+// protected route
 app.get("/protected",protect,(req,res)=>{
-    res.status(200).send("you are in protected page")
-    console.log("you are in protected page");
+    try{
+        
+        console.log("you are in protected page");
+        return res.status(200).send("you are in protected page")
+    }
+    catch(error){
+        console.log("error"+ error)
+    }
 });
-
-
+// logout route
+app.post("/logout",protect,(req,res)=>{
+    
+    console.log(req.username + "Logged out");
+    res.status(200).send("Logged out")
+});
 
 
 
