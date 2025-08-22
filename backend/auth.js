@@ -11,18 +11,20 @@
 //   }),
 //   secret: process.env.AUTH_SECRET,
 // });
-const { betterAuth } = require("better-auth");
-const { MongoClient } = require("mongodb");
-const { mongodbAdapter } = require("better-auth/adapters/mongodb");
- 
-const client = new MongoClient("mongodb+srv://eyobtesfaye838:eyob838@auth-cluster.cffb4ie.mongodb.net/");
-const db = client.db();
- 
-const auth = betterAuth({
-  database: mongodbAdapter(db),
-});
 
-module.exports = auth;
+
+// const { betterAuth } = require("better-auth");
+// const { MongoClient } = require("mongodb");
+// const { mongodbAdapter } = require("better-auth/adapters/mongodb");
+ 
+// const client = new MongoClient("mongodb+srv://eyobtesfaye838:eyob838@auth-cluster.cffb4ie.mongodb.net/");
+// const db = client.db();
+ 
+// const auth = betterAuth({
+//   database: mongodbAdapter(db),
+// });
+
+// module.exports = auth;
 // const { betterAuth } = require("better-auth");
 // const bcrypt = require("bcrypt");
 // const User = require("./models/User");

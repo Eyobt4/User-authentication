@@ -102,8 +102,6 @@ app.post("/login",async (req,res)=>{
         const accessToken = jwt.sign({id:userLogin},process.env.JWT_SECRET,{expiresIn:'5m'});
         const refreshToken = jwt.sign({id:userLogin},process.env.JWT_SECRET,{expiresIn:'7d'});
         res.status(200).send("Login successful");
-        console.log(accessToken);
-        console.log(refreshToken);
         
     }
     else{

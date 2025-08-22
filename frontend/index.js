@@ -31,16 +31,25 @@ loginForm.addEventListener("submit", async (e)=>{
     const data = Object.fromEntries(form.entries());
     try{
 
-        const res = fetch("http://localhost:5001/login", {
+        const response = fetch("http://localhost:5001/login", {
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify(data),
         });
-        console.log(res);
-        alert(result.message||"registered!");
+        console.log(response);
+        const result = await response.json;
+        if(response.ok){
+            localStorage.setItem("token",result.token);
+            window.location.href = "dashboard.html";
+        }
+        else{
+            alert(response.result);
+        }
+
     }
     catch(error){
         console.log(error);
+        alert(error);
         // return res.status(404).send("faild to login");
     }
 });
