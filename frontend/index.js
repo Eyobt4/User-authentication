@@ -16,6 +16,7 @@ signupForm.addEventListener( 'submit' ,async (event)=>{
             headers:{"Content-Type": "application/json"},
             body:JSON.stringify(data),
         });
+        
         console.log(response);
     }
     catch(error){

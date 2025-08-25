@@ -48,9 +48,22 @@ const newSchema = mongoose.Schema({
 timestamp:true
 },
 );
+const postSchema = mongoose.Schema({
+    post:{
+        type:String,
+        required:true
+    },
+    author:{
+        type:String,
+        required:true
+    }
+},{
+    timestamp:true
+});
+
 
 const newModel = mongoose.model("Model",newSchema);
-
+const newPost  = mongoose.model("postModel",postSchema);
 
 app.get("/",(req,res)=>{
     res.send("API is working");
@@ -121,11 +134,16 @@ app.get("/protected",protect,(req,res)=>{
         console.log("error"+ error)
     }
 });
-// logout route
-app.post("/logout",protect,(req,res)=>{
-    
-    console.log(req.username + "Logged out");
-    res.status(200).send("Logged out")
+
+//create post
+app.post("/createblog",async(req,res)=>{
+    const{post,author} = req.body;
+    const postUser  = await newPost.create({
+        post,
+        author,
+    });
+    postUser.save();
+    return res.status(200).json({message:"blog posted"});
 });
 
 
@@ -136,7 +154,12 @@ app.post("/logout",protect,(req,res)=>{
 
 
 
-
+// logout route
+app.post("/logout",protect,(req,res)=>{
+    
+    console.log(req.username + "Logged out");
+    res.status(200).send("Logged out")
+});
 
 
 
