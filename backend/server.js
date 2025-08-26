@@ -46,8 +46,8 @@ const newSchema = mongoose.Schema({
 },
 {
 timestamp:true
-},
-);
+},);
+
 const postSchema = mongoose.Schema({
     post:{
         type:String,
@@ -57,13 +57,15 @@ const postSchema = mongoose.Schema({
         type:String,
         required:true
     }
-},{
+},
+{
     timestamp:true
 });
 
 
 const newModel = mongoose.model("Model",newSchema);
 const newPost  = mongoose.model("postModel",postSchema);
+
 
 app.get("/",(req,res)=>{
     res.send("API is working");
@@ -105,7 +107,7 @@ app.post("/login",async (req,res)=>{
     const available = await newModel.findOne({email});
     if(!available){
         
-        res.status(404).send("all fields required");
+        res.status(404).json("Invalid Email or Password");
         
         // console.log("workkkking");
     };
@@ -137,6 +139,7 @@ app.get("/protected",protect,(req,res)=>{
 
 //create post
 app.post("/createblog",async(req,res)=>{
+    console.log("heeear");
     const{post,author} = req.body;
     const postUser  = await newPost.create({
         post,
