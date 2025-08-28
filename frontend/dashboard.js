@@ -6,14 +6,15 @@ const checkAuth = async ()=>{
     }
 }
 
-    const createblog= document.getElementById("createblog");
-    console.log(createblog.value);
-    createblog.addEventListener("submit",async (e)=>{
+const createblog= document.getElementById("createblog");
+
+
+createblog.addEventListener("submit",async (e)=>{
         e.preventDefault();
 
         const form = new FormData(createblog);
         const data = Object.fromEntries(form.entries());
-        console.log(data);
+
         
         // const form = new FormData(createblog);
         // console.log(form);
@@ -28,13 +29,36 @@ const checkAuth = async ()=>{
                 
             });
             console.log(response);
-            if(response.ok){
-                windows.locaion.href = "Home.html"
-            }
-            else{
-                console.log("post not send to backend");            }
+            // if(response.ok){
+            //     windows.locaion.href = "Home.html"
+            // }
+            // else{
+            //     console.log("post not send to backend");
+            // }
         }
         catch(error){
             console.log(error);
         }
-    });
+});
+
+const readblogs = document.getElementById("blogs");
+
+readblogs.addEventListener("",()=>{
+    try{
+        const respon = fetch("http://localhost:5001/blogs",{
+            method:"GET",
+        });
+        const result = respon.json();
+        const blogs = result.map(element => {
+
+            `The post is ${post} 
+            Author is ${author}`
+        });
+        console.log(blogs);
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+

@@ -16,6 +16,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const protect = require("./middleware/authMiddleware");
 
+// database connection
 const connectionDb = () => {
     try{
     const connect = mongoose.connect(process.env.MONGO_URL);
@@ -30,6 +31,7 @@ catch(error){
 
 connectionDb();
 
+//moongose db schema
 const newSchema = mongoose.Schema({
     username:{
         type:String,
@@ -139,7 +141,6 @@ app.get("/protected",protect,(req,res)=>{
 
 //create post
 app.post("/createblog",async(req,res)=>{
-    console.log("heeear");
     const{post,author} = req.body;
     const postUser  = await newPost.create({
         post,
@@ -149,10 +150,18 @@ app.post("/createblog",async(req,res)=>{
     return res.status(200).json({message:"blog posted"});
 });
 
+// get posts
+app.get("/posts", async(req,res)=>{
+ 
+    const blog = await newPost.findOne({});
 
-
-
-
+    if(blog){
+        res.status(200).json();
+    }
+    else{
+        res.status(400).json({message:"can't get the post"});
+    }
+});
 
 
 
