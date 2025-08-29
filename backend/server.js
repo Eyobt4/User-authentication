@@ -151,9 +151,10 @@ app.post("/createblog",async(req,res)=>{
 });
 
 // get posts
-app.get("/posts", async(req,res)=>{
+app.get("/blogs", async(req,res)=>{
  
     const blog = await newPost.findOne({});
+    console.log(blog);
 
     if(blog){
         res.status(200).json();
