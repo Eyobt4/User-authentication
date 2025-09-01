@@ -6,8 +6,8 @@ const checkAuth = async ()=>{
     }
 }
 
+// create blog form js
 const createblog= document.getElementById("createblog");
-
 
 createblog.addEventListener("submit",async (e)=>{
         e.preventDefault();
@@ -15,11 +15,6 @@ createblog.addEventListener("submit",async (e)=>{
         const form = new FormData(createblog);
         const data = Object.fromEntries(form.entries());
 
-        
-        // const form = new FormData(createblog);
-        // console.log(form);
-        // const data = Object.fromEntries(form.entries());
-        
         try{
 
             const response = fetch("http://localhost:5001/createblog",{
@@ -41,24 +36,67 @@ createblog.addEventListener("submit",async (e)=>{
         }
 });
 
-const readblogs = document.getElementById("blogs");
+// get blog posts js
+const readblogs = document.getElementById("blogShowBtn");
+const blogContainer = document.getElementById("blogContainer");
 
-readblogs.addEventListener("",()=>{
+readblogs.addEventListener("click", async()=>{
+    console.log("heaaaar");
     try{
-        const respon = fetch("http://localhost:5001/blogs",{
+        const response = await fetch("http://localhost:5001/blogs",{
             method:"GET",
         });
-        const result = respon.json();
-        const blogs = result.map(element => {
-
-            `The post is ${post} 
-            Author is ${author}`
-        });
-        console.log(blogs);
+        console.log("the response  ",response);
+        if(response.ok){
+            // const blogs = await response.json();
+            const blogs = await response.json();
+            blogs.map(blog => {
+                const postDiv = document.createElement("div");
+                postDiv.innerHTML = `
+                <h2>${blog.post}</h2>
+                <h3>${blog._id}</h3>
+                <h4>${blog.author}</h4>
+                <button id="editPost">Edit</button>
+                `;
+                blogContainer.appendChild(postDiv);
+            });
+            console.log("the blogs ",blogs);
+        }
+        else{
+            console.log("Failed to fetch the get request",response.error)
+        }
     }
     catch(error){
-        console.log(error);
+        console.log("the error ",error);
     }
 });
 
+// update blog form js
+const editPost = document.getElementById("editPost");
 
+editPost.addEventListener("click",async (e)=>{
+        e.preventDefault();
+
+        const form = new FormData(createblog);
+        const data = Object.fromEntries(form.entries());
+
+        try{
+
+            const response = fetch("http://localhost:5001/editBlog",{
+                method:"POST",
+                headers:{"content-Type":"application/json"},
+                body:JSON.stringify(data),
+                
+            });
+            console.log(response);
+            // if(response.ok){
+            //     windows.locaion.href = "Home.html"
+            // }
+            // else{
+            //     console.log("post not send to backend");
+            // }
+        }
+        catch(error){
+            console.log(error);
+        }
+});

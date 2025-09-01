@@ -1,0 +1,6 @@
+SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    because your backend server is not sending a proper JSON response.
+    return res.status(200).json(blogs); // Sends the array of posts as JSON
+
+findOne({}); for single blog
+find({}); for all blog
