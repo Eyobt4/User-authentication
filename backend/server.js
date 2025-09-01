@@ -61,7 +61,7 @@ const postSchema = mongoose.Schema({
     }
 },
 {
-    timestamp:true
+    timestamps:true
 });
 
 
@@ -151,20 +151,39 @@ app.post("/createblog",async(req,res)=>{
 });
 
 // get posts
-app.get("/blogs", async(req,res)=>{
+app.get("/blogs",async(req,res)=>{
  
-    const blog = await newPost.findOne({});
+    // const blog = await newPost.findOne({}); for single blog
+    const blog = await newPost.find({});
     console.log(blog);
 
     if(blog){
-        res.status(200).json();
+        return res.status(200).json(blog);
     }
     else{
-        res.status(400).json({message:"can't get the post"});
+        return res.status(400).json({message:"can't get the post"});
+    }
+});
+
+// Update post
+app.patch("/editBlog",async(req,res)=>{
+ 
+    // const blog = await newPost.findOne({}); for single blog
+    const blog = await newPost.find({});
+    console.log(blog);
+
+    if(blog){
+        return res.status(200).json(blog);
+    }
+    else{
+        return res.status(400).json({message:"can't get the post"});
     }
 });
 
 
+
+
+// Delete post
 
 
 // logout route
@@ -173,7 +192,6 @@ app.post("/logout",protect,(req,res)=>{
     console.log(req.username + "Logged out");
     res.status(200).send("Logged out")
 });
-
 
 
 //server listen
