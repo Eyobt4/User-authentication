@@ -75,28 +75,9 @@ readblogs.addEventListener("click", async()=>{
 const editPost = document.getElementById("editPost");
 
 editPost.addEventListener("click",async (e)=>{
-        e.preventDefault();
-
-        const form = new FormData(createblog);
-        const data = Object.fromEntries(form.entries());
-
-        try{
-
-            const response = fetch("http://localhost:5001/editBlog",{
-                method:"POST",
-                headers:{"content-Type":"application/json"},
-                body:JSON.stringify(data),
-                
-            });
-            console.log(response);
-            // if(response.ok){
-            //     windows.locaion.href = "Home.html"
-            // }
-            // else{
-            //     console.log("post not send to backend");
-            // }
-        }
-        catch(error){
-            console.log(error);
-        }
+    windows.locaion.href = "Edit.html";
 });
+// when edit btn clicked the id of that blog get
+//      then redirect to edit blog html
+// fill edit form 
+// on submit the blog change
