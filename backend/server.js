@@ -64,11 +64,11 @@ const postSchema = mongoose.Schema({
     timestamps:true
 });
 
-
+// auth and blog models
 const newModel = mongoose.model("Model",newSchema);
 const newPost  = mongoose.model("postModel",postSchema);
 
-
+// test route
 app.get("/",(req,res)=>{
     res.send("API is working");
 });
@@ -139,8 +139,8 @@ app.get("/protected",protect,(req,res)=>{
     }
 });
 
-//create post
-app.post("/createblog",async(req,res)=>{
+// Create post
+app.post("/createBlog",async(req,res)=>{
     const{post,author} = req.body;
     const postUser  = await newPost.create({
         post,
@@ -150,12 +150,26 @@ app.post("/createblog",async(req,res)=>{
     return res.status(200).json({message:"blog posted"});
 });
 
-// get posts
+// Get posts
 app.get("/blogs",async(req,res)=>{
  
     // const blog = await newPost.findOne({}); for single blog
     const blog = await newPost.find({});
-    console.log(blog);
+
+    if(blog){
+        return res.status(200).json(blog);
+    }
+    else{
+        return res.status(400).json({message:"can't get the post"});
+    }
+});
+// Get posts by id
+app.get("/blogs/:id",async(req,res)=>{
+ 
+    // const blog = await newPost.findOne({}); for single blog
+    const blog = await newPost.findById(
+        req.params.id,
+    );
 
     if(blog){
         return res.status(200).json(blog);
@@ -166,25 +180,37 @@ app.get("/blogs",async(req,res)=>{
 });
 
 // Update post
-app.patch("/editBlog",async(req,res)=>{
+app.put("/updateBlog/:id",async(req,res)=>{
  
-    // const blog = await newPost.findOne({}); for single blog
-    const blog = await newPost.find({});
+    const blog = await newPost.findById(req.params.id);
     console.log(blog);
 
     if(blog){
-        return res.status(200).json(blog);
+        const updateBlog = await newPost.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new:true}
+        );
+        res.status(200).json(updateBlog);
     }
     else{
-        return res.status(400).json({message:"can't get the post"});
+        return res.status(400).json({message:"can't get the blog"});
     }
 });
 
-
-
-
 // Delete post
-
+app.delete("/deleteBlog/:id",async (req,res)=>{
+    const blog = await newPost.findById(req.params.id);
+    if(blog){
+        const deletePost = await newPost.findByIdAndDelete(
+            req.params.id,
+    );
+        res.status(200).json({message:"blog sussesfuly deleted"});
+    }
+    else{
+        req.status(404).json({message:"can't find the blog"});
+    }
+});
 
 // logout route
 app.post("/logout",protect,(req,res)=>{
@@ -192,6 +218,9 @@ app.post("/logout",protect,(req,res)=>{
     console.log(req.username + "Logged out");
     res.status(200).send("Logged out")
 });
+
+
+
 
 
 //server listen
